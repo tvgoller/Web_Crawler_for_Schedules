@@ -9,18 +9,17 @@ from kivy.base import runTouchApp
 from kivy.uix.spinner import Spinner
 from kivy.uix.button import Button
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
 from kivy.app import App
 
-from kivy.uix.screenmanager import ScreenManager, Screen
-from kivy.properties import NumericProperty
-from kivy.lang import Builder
+from kivy.uix.popup import Popup
 
+from kivy.network.urlrequest import UrlRequest
 
-import webbrowser
 import os
 import pickle
-
+import urllib
 
 saved_choices_file = 'previous_choices.pkl'
 all_stats = None
@@ -108,15 +107,45 @@ def open_webpage(button):
     global division_choice
     print sex_choice
     print age_choice
-    print division_choice
-    link = [division['link'] 
-        for division in all_stats 
-            if (division['sex'] == sex_choice 
-                and division['age'] == int(age_choice) 
-                and division['division'] == division_choice)][0]
+    print division_choice 
+    link = 'http://127.0.0.1:8000/uysa/default/call/json/scoreboard/' \
+        + urllib.quote(sex_choice) \
+        + '/' \
+        + urllib.quote(age_choice) \
+        + '/'  \
+        + urllib.quote(division_choice) 
     print link
-    webbrowser.open_new_tab(link)
+    req = UrlRequest(link, open_scoreboard_popup)
+    #webbrowser.open_new_tab(link)
 
+def open_scoreboard_popup(req, result):
+    if result == ['ERROR']:
+        return
+    teams = [(team['name'],team['scores']['PTS']) for team in result]
+    num_teams = len(teams)
+    content = BoxLayout(orientation='vertical')
+    grid = GridLayout(cols=2)
+    scoreboard_str = sex_choice + " " + age_choice + " " + division_choice
+    
+    for x in xrange(num_teams):
+        team_str = teams[x][0]
+        btn = Button(text=team_str, font_size=10)
+        grid.add_widget(btn)
+        team_str = str(teams[x][1])
+        btn = Label(text=team_str, font_size=10, size_hint_x=None, width=65)
+        grid.add_widget(btn)
+        #btn.bind(on_release=popup.open)
+
+    content.add_widget(grid)
+    content_cancel = Button(text='Cancel', size_hint_y=None, height=40)
+    content.add_widget(content_cancel)
+    popup = Popup(title=scoreboard_str,
+                  size_hint=(None, None), size=(300, 450),
+                  content=content)
+    content_cancel.bind(on_release=popup.dismiss)
+
+    popup.open()
+    
 class AccordionApp(App):
     def build(self):        
         global boys_girls_spinner

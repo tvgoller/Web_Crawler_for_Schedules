@@ -114,8 +114,7 @@ for page_index,link in enumerate(schedule_links):
 
 with open('all_stats.pkl', 'wb') as output:
     pickle.dump(all_stats, output)
-with open('cpg_test.json', 'wb') as json_output:
-    json.dump(all_stats, json_output)
+
 [(team['name'], team['scores']) for division in all_stats if (division['sex'] == 'Girls' and division['age'] == 14) for team in division['teams'] if 'Avalanche' in team['name']]
 #r = br.open(schedule_links[0])
 #page_data = r.get_data()
