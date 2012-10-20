@@ -117,39 +117,32 @@ def open_webpage(button):
     print link
     webbrowser.open_new_tab(link)
 
-class build_filter_screen(Screen):
-    global boys_girls_spinner
-    global age_spinner
-    global division_spinner
-    b = BoxLayout(orientation='vertical')
-    boys_girls_spinner = build_spinner(sex_choice, ('Boys', 'Girls'))
-    b.add_widget(boys_girls_spinner)
-    
-    age_list = list(set([str(division['age']) for division in all_stats]))
-    age_list.sort(key=lambda x: int(x))
-    age_spinner = build_spinner(age_choice, age_list)
-    b.add_widget(age_spinner)
-    
-    division_spinner = build_spinner(division_choice, list([division['division'] for division in all_stats]))
-    b.add_widget(division_spinner)
-
-    boys_girls_spinner.bind(text=save_sex_selected_value)
-    age_spinner.bind(text=save_age_selected_value)
-    division_spinner.bind(text=save_division_selected_value)
-    
-    open_browser_button = Button(text='View Results')
-    b.add_widget(open_browser_button)
-    open_browser_button.bind(on_press=open_webpage)
-    set_spinner_values()
-
-class stats_screen(Screen):
-    pass    
-
 class AccordionApp(App):
-    def build(self):
-        root = ScreenManager()
-        root.add_widget(build_filter_screen(name='Screen1'))
-        root.add_widget(stats_screen(name='Screen2'))        
+    def build(self):        
+        global boys_girls_spinner
+        global age_spinner
+        global division_spinner
+        root = BoxLayout(orientation='vertical')        
+
+        boys_girls_spinner = build_spinner(sex_choice, ('Boys', 'Girls'))
+        root.add_widget(boys_girls_spinner)
+        
+        age_list = list(set([str(division['age']) for division in all_stats]))
+        age_list.sort(key=lambda x: int(x))
+        age_spinner = build_spinner(age_choice, age_list)
+        root.add_widget(age_spinner)
+        
+        division_spinner = build_spinner(division_choice, list([division['division'] for division in all_stats]))
+        root.add_widget(division_spinner)
+    
+        boys_girls_spinner.bind(text=save_sex_selected_value)
+        age_spinner.bind(text=save_age_selected_value)
+        division_spinner.bind(text=save_division_selected_value)
+        
+        open_browser_button = Button(text='View Results')
+        root.add_widget(open_browser_button)
+        open_browser_button.bind(on_press=open_webpage)
+        set_spinner_values()
 
         
         return root
