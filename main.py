@@ -108,7 +108,7 @@ def open_webpage(button):
     print sex_choice
     print age_choice
     print division_choice 
-    link = 'http://127.0.0.1:8000/uysa/default/call/json/scoreboard/' \
+    link = 'http://timvgo.appspot.com/uysa/default/call/json/scoreboard/' \
         + urllib.quote(sex_choice) \
         + '/' \
         + urllib.quote(age_choice) \
